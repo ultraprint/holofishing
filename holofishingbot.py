@@ -16,7 +16,7 @@ while (True):
     with mss.mss() as sct:
         indicatorDim = {"top": 270, "left": 1224, "width": 51, "height": 81}
         indicator = np.array(sct.grab(indicatorDim))
-        targetDim = {"top": 708, "left": 1131, "width": 96, "height": 96}
+        targetDim = {"top": 726, "left": 1131, "width": 96, "height": 63}
         target = np.array(sct.grab(targetDim))
 
     indicator = cv.cvtColor(indicator, cv.COLOR_BGRA2GRAY)

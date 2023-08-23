@@ -9,49 +9,62 @@ LEFT_KEY = 'a'
 RIGHT_KEY = 'd'
 CONFIRM_KEY = 'e'
 
-INDICATOR = cv.imread('assets/indicator.png', cv.IMREAD_GRAYSCALE)
-UP = cv.imread('assets/up.png', cv.IMREAD_GRAYSCALE)
-DOWN = cv.imread('assets/down.png', cv.IMREAD_GRAYSCALE)
-LEFT = cv.imread('assets/left.png', cv.IMREAD_GRAYSCALE)
-RIGHT = cv.imread('assets/right.png', cv.IMREAD_GRAYSCALE)
-CIRCLE = cv.imread('assets/circle.png', cv.IMREAD_GRAYSCALE)
+INDICATOR = cv.cvtColor(cv.imread('assets/indicator.png'), cv.COLOR_BGRA2GRAY)
+UP = cv.cvtColor(cv.imread('assets/up.png'), cv.COLOR_BGRA2GRAY)
+DOWN = cv.cvtColor(cv.imread('assets/down.png'), cv.COLOR_BGRA2GRAY)
+LEFT = cv.cvtColor(cv.imread('assets/left.png'), cv.COLOR_BGRA2GRAY)
+RIGHT = cv.cvtColor(cv.imread('assets/right.png'), cv.COLOR_BGRA2GRAY)
+CIRCLE = cv.cvtColor(cv.imread('assets/circle.png'), cv.COLOR_BGRA2GRAY)
 
-MATCH_METHOD = cv.TM_CCOEFF_NORMED
+INDICATOR_MASK = cv.cvtColor(cv.imread('assets/indicator_mask.png'), cv.COLOR_BGRA2GRAY)
+UP_MASK = cv.cvtColor(cv.imread('assets/up_mask.png'), cv.COLOR_BGRA2GRAY)
+DOWN_MASK = cv.cvtColor(cv.imread('assets/down_mask.png'), cv.COLOR_BGRA2GRAY)
+LEFT_MASK = cv.cvtColor(cv.imread('assets/left_mask.png'), cv.COLOR_BGRA2GRAY)
+RIGHT_MASK = cv.cvtColor(cv.imread('assets/right_mask.png'), cv.COLOR_BGRA2GRAY)
+CIRCLE_MASK = cv.cvtColor(cv.imread('assets/circle_mask.png'), cv.COLOR_BGRA2GRAY)
+
+MATCH_METHOD = cv.TM_SQDIFF_NORMED
+MATCH_THRESHOLD = 0.9
+
+def matched(result):
+    if (MATCH_METHOD == cv.TM_SQDIFF_NORMED):
+        return cv.minMaxLoc(result)[0] < 1-MATCH_THRESHOLD
+    else:
+        return cv.minMaxLoc(result)[1] > MATCH_THRESHOLD
 
 isFishing = False
 
 while (True):
     with mss.mss() as sct:
         indicatorDim = {"top": 270, "left": 1224, "width": 51, "height": 81}
-        indicator = np.array(sct.grab(indicatorDim))
-        targetDim = {"top": 726, "left": 1131, "width": 96, "height": 63}
-        target = np.array(sct.grab(targetDim))
+        indicatorSS = np.array(sct.grab(indicatorDim))
+        indicatorSS = cv.cvtColor(indicatorSS, cv.COLOR_BGRA2GRAY)
+        targetDim = {"top": 726, "left": 1143, "width": 72, "height": 63}
+        targetSS = np.array(sct.grab(targetDim))
+        targetSS = cv.cvtColor(targetSS, cv.COLOR_BGRA2GRAY)
 
-    indicator = cv.cvtColor(indicator, cv.COLOR_BGRA2GRAY)
-    resIndicator = cv.matchTemplate(indicator, INDICATOR, MATCH_METHOD)
+    resIndicator = cv.matchTemplate(indicatorSS, INDICATOR, MATCH_METHOD, mask=INDICATOR_MASK)
 
-    if (cv.minMaxLoc(resIndicator)[1] > 0.9):
+    if (matched(resIndicator)):
         isFishing = True
     else:
         isFishing = False
         di.press(CONFIRM_KEY)
 
     if isFishing:
-        target = cv.cvtColor(target, cv.COLOR_BGRA2GRAY)
+        resUp = cv.matchTemplate(targetSS, UP, MATCH_METHOD, mask=UP_MASK)
+        resDown = cv.matchTemplate(targetSS, DOWN, MATCH_METHOD, mask=DOWN_MASK)
+        resLeft = cv.matchTemplate(targetSS, LEFT, MATCH_METHOD, mask=LEFT_MASK)
+        resRight = cv.matchTemplate(targetSS, RIGHT, MATCH_METHOD, mask=RIGHT_MASK)
+        resCircle = cv.matchTemplate(targetSS, CIRCLE, MATCH_METHOD, mask=CIRCLE_MASK)
 
-        resUp = cv.matchTemplate(target, UP, MATCH_METHOD)
-        resDown = cv.matchTemplate(target, DOWN, MATCH_METHOD)
-        resLeft = cv.matchTemplate(target, LEFT, MATCH_METHOD)
-        resRight = cv.matchTemplate(target, RIGHT, MATCH_METHOD)
-        resCircle = cv.matchTemplate(target, CIRCLE, MATCH_METHOD)
-
-        if (cv.minMaxLoc(resUp)[1] > 0.9):
+        if (matched(resUp)):
             di.press(UP_KEY)
-        elif (cv.minMaxLoc(resDown)[1] > 0.9):
+        elif (matched(resDown)):
             di.press(DOWN_KEY)
-        elif (cv.minMaxLoc(resLeft)[1] > 0.9):
+        elif (matched(resLeft)):
             di.press(LEFT_KEY)
-        elif (cv.minMaxLoc(resRight)[1] > 0.9):
+        elif (matched(resRight)):
             di.press(RIGHT_KEY)
-        elif (cv.minMaxLoc(resCircle)[1] > 0.9):
+        elif (matched(resCircle)):
             di.press(CONFIRM_KEY)

@@ -10,3 +10,4 @@ Python Dependencies:
 - mss
 - pydirectinput
 - numpy
+- pynput

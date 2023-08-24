@@ -32,8 +32,6 @@ def matched(result):
     else:
         return cv.minMaxLoc(result)[1] > MATCH_THRESHOLD
 
-isFishing = False
-
 while (True):
     with mss.mss() as sct:
         indicatorDim = {"top": 270, "left": 1224, "width": 51, "height": 81}
@@ -46,12 +44,6 @@ while (True):
     resIndicator = cv.matchTemplate(indicatorSS, INDICATOR, MATCH_METHOD, mask=INDICATOR_MASK)
 
     if (matched(resIndicator)):
-        isFishing = True
-    else:
-        isFishing = False
-        di.press(CONFIRM_KEY)
-
-    if isFishing:
         resUp = cv.matchTemplate(targetSS, UP, MATCH_METHOD, mask=UP_MASK)
         resDown = cv.matchTemplate(targetSS, DOWN, MATCH_METHOD, mask=DOWN_MASK)
         resLeft = cv.matchTemplate(targetSS, LEFT, MATCH_METHOD, mask=LEFT_MASK)
@@ -68,3 +60,5 @@ while (True):
             di.press(RIGHT_KEY)
         elif (matched(resCircle)):
             di.press(CONFIRM_KEY)
+    else:
+        di.press(CONFIRM_KEY)

@@ -55,32 +55,32 @@ listener = kb.GlobalHotKeys({
 })
 listener.start()
 
-while (runProgram):
-    if (runBot):
-        with mss.mss() as sct:
+with mss.mss() as sct:
+    while (runProgram):
+        if (runBot):
             indicatorSS = np.array(sct.grab(INDICATOR_DIM))
             indicatorSS = cv.cvtColor(indicatorSS, cv.COLOR_BGRA2GRAY)
             targetSS = np.array(sct.grab(TARGET_DIM))
             targetSS = cv.cvtColor(targetSS, cv.COLOR_BGRA2GRAY)
 
-        resIndicator = cv.matchTemplate(indicatorSS, INDICATOR, MATCH_METHOD, mask=INDICATOR_MASK)
+            resIndicator = cv.matchTemplate(indicatorSS, INDICATOR, MATCH_METHOD, mask=INDICATOR_MASK)
 
-        if (matched(resIndicator)):
-            resUp = cv.matchTemplate(targetSS, UP, MATCH_METHOD, mask=UP_MASK)
-            resDown = cv.matchTemplate(targetSS, DOWN, MATCH_METHOD, mask=DOWN_MASK)
-            resLeft = cv.matchTemplate(targetSS, LEFT, MATCH_METHOD, mask=LEFT_MASK)
-            resRight = cv.matchTemplate(targetSS, RIGHT, MATCH_METHOD, mask=RIGHT_MASK)
-            resCircle = cv.matchTemplate(targetSS, CIRCLE, MATCH_METHOD, mask=CIRCLE_MASK)
+            if (matched(resIndicator)):
+                resUp = cv.matchTemplate(targetSS, UP, MATCH_METHOD, mask=UP_MASK)
+                resDown = cv.matchTemplate(targetSS, DOWN, MATCH_METHOD, mask=DOWN_MASK)
+                resLeft = cv.matchTemplate(targetSS, LEFT, MATCH_METHOD, mask=LEFT_MASK)
+                resRight = cv.matchTemplate(targetSS, RIGHT, MATCH_METHOD, mask=RIGHT_MASK)
+                resCircle = cv.matchTemplate(targetSS, CIRCLE, MATCH_METHOD, mask=CIRCLE_MASK)
 
-            if (matched(resUp)):
-                di.press(UP_KEY)
-            elif (matched(resDown)):
-                di.press(DOWN_KEY)
-            elif (matched(resLeft)):
-                di.press(LEFT_KEY)
-            elif (matched(resRight)):
-                di.press(RIGHT_KEY)
-            elif (matched(resCircle)):
+                if (matched(resUp)):
+                    di.press(UP_KEY)
+                elif (matched(resDown)):
+                    di.press(DOWN_KEY)
+                elif (matched(resLeft)):
+                    di.press(LEFT_KEY)
+                elif (matched(resRight)):
+                    di.press(RIGHT_KEY)
+                elif (matched(resCircle)):
+                    di.press(CONFIRM_KEY)
+            else:
                 di.press(CONFIRM_KEY)
-        else:
-            di.press(CONFIRM_KEY)

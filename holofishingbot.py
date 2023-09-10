@@ -1,4 +1,4 @@
-import mss.tools
+from mss import mss
 import cv2 as cv
 import numpy as np
 import pydirectinput as di
@@ -55,7 +55,7 @@ listener = kb.GlobalHotKeys({
 })
 listener.start()
 
-with mss.mss() as sct:
+with mss() as sct:
     while (runProgram):
         if (runBot):
             indicatorSS = np.array(sct.grab(INDICATOR_DIM))

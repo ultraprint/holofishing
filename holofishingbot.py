@@ -10,7 +10,7 @@ UP_KEY = 'w'
 DOWN_KEY = 's'
 LEFT_KEY = 'a'
 RIGHT_KEY = 'd'
-CONFIRM_KEY = 'e'
+CONFIRM_KEY = 'enter'
 
 INDICATOR = cv.cvtColor(cv.imread('assets/indicator.png'), cv.COLOR_BGRA2GRAY)
 UP = cv.cvtColor(cv.imread('assets/up.png'), cv.COLOR_BGRA2GRAY)

@@ -1,3 +1,4 @@
+from os import path
 from mss import mss
 import cv2 as cv
 import numpy as np
@@ -12,19 +13,23 @@ LEFT_KEY = 'a'
 RIGHT_KEY = 'd'
 CONFIRM_KEY = 'enter'
 
-INDICATOR = cv.cvtColor(cv.imread('assets/indicator.png'), cv.COLOR_BGRA2GRAY)
-UP = cv.cvtColor(cv.imread('assets/up.png'), cv.COLOR_BGRA2GRAY)
-DOWN = cv.cvtColor(cv.imread('assets/down.png'), cv.COLOR_BGRA2GRAY)
-LEFT = cv.cvtColor(cv.imread('assets/left.png'), cv.COLOR_BGRA2GRAY)
-RIGHT = cv.cvtColor(cv.imread('assets/right.png'), cv.COLOR_BGRA2GRAY)
-CIRCLE = cv.cvtColor(cv.imread('assets/circle.png'), cv.COLOR_BGRA2GRAY)
+def imgpath(filename):
+    filename = path.join('assets', filename)
+    return path.abspath(path.join(path.dirname(__file__), filename))
 
-INDICATOR_MASK = cv.cvtColor(cv.imread('assets/indicator_mask.png'), cv.COLOR_BGRA2GRAY)
-UP_MASK = cv.cvtColor(cv.imread('assets/up_mask.png'), cv.COLOR_BGRA2GRAY)
-DOWN_MASK = cv.cvtColor(cv.imread('assets/down_mask.png'), cv.COLOR_BGRA2GRAY)
-LEFT_MASK = cv.cvtColor(cv.imread('assets/left_mask.png'), cv.COLOR_BGRA2GRAY)
-RIGHT_MASK = cv.cvtColor(cv.imread('assets/right_mask.png'), cv.COLOR_BGRA2GRAY)
-CIRCLE_MASK = cv.cvtColor(cv.imread('assets/circle_mask.png'), cv.COLOR_BGRA2GRAY)
+INDICATOR = cv.cvtColor(cv.imread(imgpath('indicator.png')), cv.COLOR_BGRA2GRAY)
+UP = cv.cvtColor(cv.imread(imgpath('up.png')), cv.COLOR_BGRA2GRAY)
+DOWN = cv.cvtColor(cv.imread(imgpath('down.png')), cv.COLOR_BGRA2GRAY)
+LEFT = cv.cvtColor(cv.imread(imgpath('left.png')), cv.COLOR_BGRA2GRAY)
+RIGHT = cv.cvtColor(cv.imread(imgpath('right.png')), cv.COLOR_BGRA2GRAY)
+CIRCLE = cv.cvtColor(cv.imread(imgpath('circle.png')), cv.COLOR_BGRA2GRAY)
+
+INDICATOR_MASK = cv.cvtColor(cv.imread(imgpath('indicator_mask.png')), cv.COLOR_BGRA2GRAY)
+UP_MASK = cv.cvtColor(cv.imread(imgpath('up_mask.png')), cv.COLOR_BGRA2GRAY)
+DOWN_MASK = cv.cvtColor(cv.imread(imgpath('down_mask.png')), cv.COLOR_BGRA2GRAY)
+LEFT_MASK = cv.cvtColor(cv.imread(imgpath('left_mask.png')), cv.COLOR_BGRA2GRAY)
+RIGHT_MASK = cv.cvtColor(cv.imread(imgpath('right_mask.png')), cv.COLOR_BGRA2GRAY)
+CIRCLE_MASK = cv.cvtColor(cv.imread(imgpath('circle_mask.png')), cv.COLOR_BGRA2GRAY)
 
 INDICATOR_DIM = {"top": 270, "left": 1224, "width": 51, "height": 81}
 TARGET_DIM = {"top": 726, "left": 1143, "width": 72, "height": 63}

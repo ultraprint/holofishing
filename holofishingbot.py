@@ -1,10 +1,20 @@
+# TODO:
+# - Move this shit to github (How do I use github)
+# - Note that holocure has these black bars when moving from fullscreen to windowed
+# - Check if window resolution is equal to game resolution, if so we minus the screen res. vs the game res
+#     - To check game resolution, use GetClientRect
+# - Implement different supported resolutions
+# - Move the window check to a dedicated function
+
 from os import path
 from mss import mss
 import cv2 as cv
 import numpy as np
 import pydirectinput as di
 import pynput.keyboard as kb
+import win32gui
 
+# HOTKEYS
 STOP_KEY = 'k'
 TOGGLE_KEY = 'f'
 UP_KEY = 'w'
@@ -12,6 +22,13 @@ DOWN_KEY = 's'
 LEFT_KEY = 'a'
 RIGHT_KEY = 'd'
 CONFIRM_KEY = 'enter'
+
+window_handle = win32gui.FindWindow(None, "HoloCure")
+client_rect = win32gui.GetClientRect(window_handle)
+screen_res = (client_rect[2], client_rect[3])
+window_btm_right = win32gui.ClientToScreen(window_handle, screen_res)
+window_top_left = (window_btm_right[0] - 1920, window_btm_right[1] - 1080)
+print("window_top_left: " + str(window_top_left))
 
 def imgpath(filename):
     filename = path.join('assets', filename)
@@ -31,10 +48,8 @@ LEFT_MASK = cv.cvtColor(cv.imread(imgpath('left_mask.png')), cv.COLOR_BGRA2GRAY)
 RIGHT_MASK = cv.cvtColor(cv.imread(imgpath('right_mask.png')), cv.COLOR_BGRA2GRAY)
 CIRCLE_MASK = cv.cvtColor(cv.imread(imgpath('circle_mask.png')), cv.COLOR_BGRA2GRAY)
 
-INDICATOR_DIM = {"top": 270, "left": 1224, "width": 51, "height": 81}
-TARGET_DIM = {"top": 726, "left": 1143, "width": 72, "height": 63}
-
 MATCH_METHOD = cv.TM_SQDIFF_NORMED
+
 MATCH_THRESHOLD = 0.9
 
 def matched(result):
@@ -47,12 +62,14 @@ runProgram = True
 runBot = False
 
 def stop():
+    print("Quit key pressed, quitting...")
     global runProgram
     runProgram = False
 
 def toggle():
     global runBot
     runBot = not runBot
+    print("Program toggled...")
 
 listener = kb.GlobalHotKeys({
     STOP_KEY: stop,
@@ -63,6 +80,14 @@ listener.start()
 with mss() as sct:
     while (runProgram):
         if (runBot):
+            # Jank solution below, I think this uses more cycles than necessary so I'd like to ignore it.
+            window_handle = win32gui.FindWindow(None, "HoloCure")
+            client_rect = win32gui.GetClientRect(window_handle)
+            screen_res = (client_rect[2], client_rect[3])
+            window_btm_right = win32gui.ClientToScreen(window_handle, screen_res)
+            window_top_left = (window_btm_right[0] - 1920, window_btm_right[1] - 1080)
+            INDICATOR_DIM = {"top": window_top_left[1] + 270, "left": window_top_left[0] + 1224, "width": 51, "height": 81}
+            TARGET_DIM = {"top": window_top_left[1] + 726, "left": window_top_left[0] + 1143, "width": 72, "height": 63}
             indicatorSS = np.array(sct.grab(INDICATOR_DIM))
             indicatorSS = cv.cvtColor(indicatorSS, cv.COLOR_BGRA2GRAY)
             targetSS = np.array(sct.grab(TARGET_DIM))
@@ -71,6 +96,7 @@ with mss() as sct:
             resIndicator = cv.matchTemplate(indicatorSS, INDICATOR, MATCH_METHOD, mask=INDICATOR_MASK)
 
             if (matched(resIndicator)):
+                print("INDICATOR MATCHED")
                 resUp = cv.matchTemplate(targetSS, UP, MATCH_METHOD, mask=UP_MASK)
                 resDown = cv.matchTemplate(targetSS, DOWN, MATCH_METHOD, mask=DOWN_MASK)
                 resLeft = cv.matchTemplate(targetSS, LEFT, MATCH_METHOD, mask=LEFT_MASK)
@@ -79,13 +105,19 @@ with mss() as sct:
 
                 if (matched(resUp)):
                     di.press(UP_KEY)
+                    print("PRESSED: UP")
                 elif (matched(resDown)):
                     di.press(DOWN_KEY)
+                    print("PRESSED: DOWN")
                 elif (matched(resLeft)):
                     di.press(LEFT_KEY)
+                    print("PRESSED: LEFT")
                 elif (matched(resRight)):
                     di.press(RIGHT_KEY)
+                    print("PRESSED: RIGHT")
                 elif (matched(resCircle)):
                     di.press(CONFIRM_KEY)
+                    print("PRESSED: CONFIRM")
             else:
                 di.press(CONFIRM_KEY)
+                print("PRESSED: CONFIRM (ELSE)")

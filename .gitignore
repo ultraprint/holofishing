@@ -1,3 +1,10 @@
 # venv directory
 holofishing
+
+# todo list
 todo.txt
+
+# build files
+build
+dist
+holofishingbot.spec

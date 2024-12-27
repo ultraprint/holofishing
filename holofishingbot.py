@@ -1,11 +1,3 @@
-# TODO:
-# - Move this shit to github (How do I use github)
-# - Note that holocure has these black bars when moving from fullscreen to windowed
-# - Check if window resolution is equal to game resolution, if so we minus the screen res. vs the game res
-#     - To check game resolution, use GetClientRect
-# - Implement different supported resolutions
-# - Move the window check to a dedicated function
-
 from os import path
 from mss import mss
 import cv2 as cv

@@ -8,6 +8,5 @@ def get_top_left(window_name):
     screen_res = (client_rect[2], client_rect[3])
     window_btm_right = win32gui.ClientToScreen(window_handle, screen_res)
     window_top_left = (window_btm_right[0] - 1920, window_btm_right[1] - 1080)
-    print("window_top_left: " + str(window_top_left))
 
     return window_top_left

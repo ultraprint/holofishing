@@ -14,14 +14,7 @@ DOWN_KEY = 's'
 LEFT_KEY = 'a'
 RIGHT_KEY = 'd'
 CONFIRM_KEY = 'enter'
-'''
-window_handle = win32gui.FindWindow(None, "HoloCure")
-client_rect = win32gui.GetClientRect(window_handle)
-screen_res = (client_rect[2], client_rect[3])
-window_btm_right = win32gui.ClientToScreen(window_handle, screen_res)
-window_top_left = (window_btm_right[0] - 1920, window_btm_right[1] - 1080)
-print("window_top_left: " + str(window_top_left))
-'''
+
 def imgpath(filename):
     filename = path.join('assets', filename)
     return path.abspath(path.join(path.dirname(__file__), filename))
@@ -75,7 +68,6 @@ listener.start()
 with mss() as sct:
     while (runProgram):
         if (runBot):
-            # Jank solution below
             window_top_left = get_window_dimensions.get_top_left("Holocure")
             INDICATOR_DIM = {"top": window_top_left[1] + 270, "left": window_top_left[0] + 1224, "width": 51, "height": 81}
             TARGET_DIM = {"top": window_top_left[1] + 726, "left": window_top_left[0] + 1143, "width": 72, "height": 63}
